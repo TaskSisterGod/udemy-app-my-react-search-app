@@ -1,13 +1,34 @@
 import React,{Component} from 'react';
+import { ApolloProvider } from 'react-apollo'
+import gql from 'graphql-tag'
+import { Query } from 'react-apollo'
+import client from "./client"
 
-const GITHUB_ACCESS_TOKEN = process.env.REACT_APP_GITHUB_TOKEN
-
-console.log({GITHUB_ACCESS_TOKEN})
+const ME = gql`
+	query me {
+		user(login: "iteachonudemy"){
+			name
+			avatarUrl
+		}
+	}
+`
 
 class App extends Component {
 	render(){
 		return (
-			<div>Hello World</div>
+			<ApolloProvider client={client}>
+				<div>Hello World</div>
+
+				<Query query={ME}>
+					{
+						({loading,error,data}) => {
+							if(loading) return 'loading'
+							if(error) return 'Error'
+							return <div>{data.user.name}</div>
+						}
+					}
+				</Query>
+			</ApolloProvider>
 		)
 	}
 }
